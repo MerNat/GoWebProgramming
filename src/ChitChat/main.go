@@ -32,14 +32,14 @@ func main(){
 	server.ListenAndServe()
 }
 
-func index(w http.ResponseWriter, request *http.Request){
-	files := []string{
-		"templates/layout.html",
-		"templates/navbar.html",
-		"templates/index.html",
-	}
-	templates := template.Must(template.ParseFiles(files...))
-	threads, err := data.Threads(); if err == nil{
-		templates.ExecuteTemplate(w, "layout", threads)
+func index(w http.ResponseWriter, r *http.Request){
+	threads, err := data.Threads(); if err==nil{
+		_, err := session(w, r)
+		var templates *template.Template
+		if err != nil{
+			generateHTML(w, threads, "layout", "public.navbar", "index")
+		}else{
+			generateHTML(w, threads, "layout", "private.navbar", "index")
+		}
 	}
 }
