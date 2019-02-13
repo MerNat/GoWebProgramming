@@ -17,7 +17,7 @@ type Post struct{
 	Uuid	string
 	Body	string
 	UserId	uint32
-	Thread	uint32
+	ThreadId	uint32
 	CreatedAt	time.Time
 }
 
@@ -26,6 +26,7 @@ func(thread *Thread) CreatedAtDate() string{
 	return thread.CreatedAt.Format("Jan 2, 2006 at 3:04pm")
 }
 
+// CreatedAtDate formats date of a Post
 func (post *Post) CreatedAtDate() string{
 	return post.CreatedAt.Format("Jan 2, 2006 at 3:04pm")
 }
@@ -50,7 +51,7 @@ func (user *User) CreatePost(conv Thread, body string)(thePost Post,err error){
 		return
 	}
 	defer stmt.Close()
-	err = stmt.QueryRow(createUUID(),body,user.Id,conv.Id,time.Now()).Scan(&thePost.Id,&thePost.Uuid,&thePost.Body,&thePost.UserId,&thePost.Thread,&thePost.CreatedAt)
+	err = stmt.QueryRow(createUUID(),body,user.Id,conv.Id,time.Now()).Scan(&thePost.Id,&thePost.Uuid,&thePost.Body,&thePost.UserId,&thePost.ThreadId,&thePost.CreatedAt)
 	return
 }
 // Threads returns all threads from the database
@@ -82,5 +83,46 @@ func (post *Post) User()(user User){
 	user = User{}
 	Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id=$1",post.UserId).
 	Scan(&user.Id,&user.Uuid,&user.Name,&user.Email,&user.CreatedAt)
+	return
+}
+
+// ThreadByUUID gets a thread by the UUID
+func ThreadByUUID(uuid string)(conv Thread, err error){
+	conv = Thread{}
+	Db.QueryRow("SELECT id, uuid, topic, user_id, created_at FROM threads WHERE uuid=$1",uuid).
+	Scan(&conv.Id,&conv.Uuid,&conv.Topic,&conv.UserId,&conv.CreatedAt)
+	return
+}
+
+// Posts Method returns posts associated with a thread
+func (thread *Thread) Posts()(posts []Post, err error){
+	rows, err := Db.Query("SELECT id, uuid, body, user_id, thread_id, created_at WHERE thread_id=$1",thread.Id)
+	if err != nil{
+		return
+	}
+	defer rows.Close()
+	for rows.Next(){
+		post := Post{}
+		if err = rows.Scan(&post.Id,&post.Uuid,&post.Body,&post.UserId,&post.ThreadId,&post.CreatedAt); err != nil{
+			return
+		}
+		posts = append(posts, post)
+	}
+	return
+}
+
+
+// NumReplies Method returns number of posts of a specific thread
+func (thread *Thread) NumReplies()(count int){
+	rows, err := Db.Query("SELECT count(*) FROM posts WHERE thread_id = $1", thread.Id)
+	if err != nil{
+		return
+	}
+	defer rows.Close()
+	for rows.Next(){
+		if err = rows.Scan(&count); err!=nil{
+			return
+		}
+	}
 	return
 }
