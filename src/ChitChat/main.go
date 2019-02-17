@@ -3,11 +3,12 @@ package main
 import (
 	"data"
 	"net/http"
+	"fmt"
 )
 
 func main() {
 	mux := http.NewServeMux()
-	files := http.FileServer(http.Dir("/public"))
+	files := http.FileServer(http.Dir("public"))
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
 	mux.HandleFunc("/", index)
@@ -27,6 +28,7 @@ func main() {
 		Handler: mux,
 	}
 
+	fmt.Println("Server Started")
 	server.ListenAndServe()
 }
 
@@ -39,5 +41,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		} else {
 			generateHTML(w, threads, "layout", "private.navbar", "index")
 		}
+	}else{
+		fmt.Println("Something is wrong", err.Error())
 	}
 }
