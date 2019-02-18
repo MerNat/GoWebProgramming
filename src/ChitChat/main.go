@@ -6,14 +6,19 @@ import (
 	"fmt"
 	"reflect"
 	"runtime"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	muxOld := http.NewServeMux()
+	mux2 := mux.NewRouter()
 	files := http.FileServer(http.Dir("public"))
-	mux.Handle("/static/", http.StripPrefix("/static/", files))
-
-	mux.HandleFunc("/", log(index))
+	muxOld.Handle("/static/", http.StripPrefix("/static/", files))
+	mux2.Handle("/static/", http.StripPrefix("/static", files))
+	
+	// mux2.Handle("/{mmaa}/", log(index))
+	mux2.Handle("/", log(index))
+	muxOld.HandleFunc("/", log(index))
 	// mux.HandleFunc("/err", err)
 	// mux.HandleFunc("/login", login)
 	// mux.HandleFunc("/logout", logout)
@@ -27,7 +32,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:8080",
-		Handler: mux,
+		Handler: mux2,
 	}
 
 	fmt.Println("Server Started")
@@ -43,6 +48,8 @@ func log(h http.HandlerFunc) http.HandlerFunc {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
+	values := mux.Vars(r)
+	fmt.Println("The value of mmaa: ", values["mmaa"], r.Method)
 	threads, err := data.Threads()
 	if err == nil {
 		_, err := session(w, r)
