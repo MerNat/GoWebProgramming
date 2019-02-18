@@ -2,10 +2,11 @@ package main
 
 import (
 	"data"
-	"net/http"
 	"fmt"
+	"net/http"
 	"reflect"
 	"runtime"
+
 	"github.com/gorilla/mux"
 )
 
@@ -15,10 +16,10 @@ func main() {
 	files := http.FileServer(http.Dir("public"))
 	muxOld.Handle("/static/", http.StripPrefix("/static/", files))
 	mux2.Handle("/static/", http.StripPrefix("/static", files))
-	
+
 	// mux2.Handle("/{mmaa}/", log(index))
-	mux2.Handle("/", log(index))
-	muxOld.HandleFunc("/", log(index))
+	mux2.HandleFunc("/", index)
+	muxOld.HandleFunc("/", index)
 	// mux.HandleFunc("/err", err)
 	// mux.HandleFunc("/login", login)
 	// mux.HandleFunc("/logout", logout)
@@ -48,9 +49,13 @@ func log(h http.HandlerFunc) http.HandlerFunc {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	values := mux.Vars(r)
-	fmt.Println("The value of mmaa: ", values["mmaa"], r.Method)
+	// values := mux.Vars(r)
+	// fmt.Println("The value of mmaa: ", values["mmaa"], r.Method)
+
+	h := r.Header["User-Agent"]
+	fmt.Println(h)
 	threads, err := data.Threads()
+	w.WriteHeader(404) //Status Code
 	if err == nil {
 		_, err := session(w, r)
 		if err != nil {
@@ -58,5 +63,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		} else {
 			generateHTML(w, threads, "layout", "private.navbar", "index")
 		}
+	} else {
+		fmt.Println("Error Found: ", err.Error())
 	}
 }
