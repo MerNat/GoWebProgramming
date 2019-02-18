@@ -4,6 +4,8 @@ import (
 	"data"
 	"net/http"
 	"fmt"
+	"reflect"
+	"runtime"
 )
 
 func main() {
@@ -11,7 +13,7 @@ func main() {
 	files := http.FileServer(http.Dir("public"))
 	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
-	mux.HandleFunc("/", index)
+	mux.HandleFunc("/", log(index))
 	// mux.HandleFunc("/err", err)
 	// mux.HandleFunc("/login", login)
 	// mux.HandleFunc("/logout", logout)
@@ -32,6 +34,14 @@ func main() {
 	server.ListenAndServe()
 }
 
+func log(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name()
+		fmt.Println("Handler function called - " + name)
+		h(w, r)
+	}
+}
+
 func index(w http.ResponseWriter, r *http.Request) {
 	threads, err := data.Threads()
 	if err == nil {
@@ -41,7 +51,5 @@ func index(w http.ResponseWriter, r *http.Request) {
 		} else {
 			generateHTML(w, threads, "layout", "private.navbar", "index")
 		}
-	}else{
-		fmt.Println("Something is wrong", err.Error())
 	}
 }
