@@ -4,8 +4,8 @@ import (
 	"data"
 	"fmt"
 	"net/http"
-	"reflect"
-	"runtime"
+	// "reflect"
+	// "runtime"
 
 	"github.com/gorilla/mux"
 )
@@ -14,14 +14,14 @@ func main() {
 	muxOld := http.NewServeMux()
 	mux2 := mux.NewRouter()
 	files := http.FileServer(http.Dir("public"))
-	muxOld.Handle("/static/", http.StripPrefix("/static/", files))
-	mux2.Handle("/static/", http.StripPrefix("/static", files))
+	muxOld.Handle("/static/", http.StripPrefix("/static/", files)) // builtIn
+	mux2.Handle("/static/", http.StripPrefix("static/", files)) // for gorilla mux
 
 	// mux2.Handle("/{mmaa}/", log(index))
 	mux2.HandleFunc("/", index)
 	muxOld.HandleFunc("/", index)
 	// mux.HandleFunc("/err", err)
-	// mux.HandleFunc("/login", login)
+	mux2.HandleFunc("/login", login)
 	// mux.HandleFunc("/logout", logout)
 	// mux.HandleFunc("/signup", signup)
 	// mux.HandleFunc("/signup_account", signupAccount)
@@ -40,20 +40,17 @@ func main() {
 	server.ListenAndServe()
 }
 
-func log(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name()
-		fmt.Println("Handler function called - " + name)
-		h(w, r)
-	}
-}
+// func log(h http.HandlerFunc) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name()
+// 		fmt.Println("Handler function called - " + name)
+// 		h(w, r)
+// 	}
+// }
 
 func index(w http.ResponseWriter, r *http.Request) {
 	// values := mux.Vars(r)
 	// fmt.Println("The value of mmaa: ", values["mmaa"], r.Method)
-
-	h := r.Header["User-Agent"]
-	fmt.Println(h)
 	threads, err := data.Threads()
 	w.WriteHeader(404) //Status Code
 	if err == nil {

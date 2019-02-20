@@ -23,7 +23,7 @@ type Session struct{
 }
 
 // Create a new session for an existing user
-func (user *User) createSession()(session Session, err error){
+func (user *User) CreateSession()(session Session, err error){
 	statement := "insert into sessions (uuid, email, user_id, created_at) values ($1, $2, $3, $4) returning id, uuid, email, user_id, created_at"
 	stmt, err := Db.Prepare(statement)
 	if err != nil{
@@ -56,8 +56,7 @@ func (session *Session) Check()(valid bool, err error){
 	return
 }
 
-// Delete session from database
-
+// DeleteByUUID session from database
 func (session *Session) DeleteByUUID()(err error){
 	statement := "delete from sessions where uuid = $1"
 	stmt, err := Db.Prepare(statement)
@@ -95,5 +94,19 @@ func (user *User) Create() (err error){
 
 	defer stmt.Close()
 	err = stmt.QueryRow(createUUID, user.Name, user.Email, Encrypt(user.Password), time.Now()).Scan(&user.Id,&user.Uuid,&user.CreatedAt)
+	return
+}
+
+// UserByEmail returns a user using an email
+func UserByEmail(email string)(user User, err error){
+	statement := "SELECT id, uuid, name, email, created_at FROM users WHERE email=$1"
+	err = Db.QueryRow(statement,email).Scan(&user.Id,&user.Uuid,&user.Name,&user.Email,&user.CreatedAt)
+	return
+}
+
+// UserByUUID returns a user using UUID
+func UserByUUID(uuid string)(user User, err error){
+	statement := "SELECT id, uuid, name, email, created_at FROM users WHERE uuid=$1"
+	err = Db.QueryRow(statement,uuid).Scan(&user.Id,&user.Uuid,&user.Name,&user.Email,&user.CreatedAt)
 	return
 }
