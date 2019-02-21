@@ -6,11 +6,16 @@
       ChitChat
     </i>
   </h2>
+
+  {{if .}}
+    <h4>Wrong Password</h4>
+  {{end}}
+
   <input type="email" name="email" class="form-control" placeholder="Email address" required autofocus>
   <input type="password" name="password" class="form-control" placeholder="Password" required>
-  <br/>
+  <br />
   <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-  <br/>
+  <br />
   <a class="lead pull-right" href="/signup">Sign up</a>
 </form>
 

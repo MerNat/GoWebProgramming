@@ -1,0 +1,10 @@
+ERROR 2019/02/21 16:09:43 util.go:63: sql: converting argument $1 type: unsupported type func() string, a func Can not create user
+ERROR 2019/02/21 16:46:44 util.go:63: sql: converting argument $1 type: unsupported type func() string, a func Can not create user
+ERROR 2019/02/21 16:52:07 util.go:63: sql: expected 5 destination arguments in Scan, not 4 Can not create a session!
+ERROR 2019/02/21 16:58:32 util.go:63: sql: expected 5 destination arguments in Scan, not 4 Can not create a session!
+WARNING 2019/02/21 17:00:43 util.go:68: http: named cookie not present Failed to get cookie
+WARNING 2019/02/21 17:00:46 util.go:68: http: named cookie not present Failed to get cookie
+ERROR 2019/02/21 17:04:26 util.go:63: sql: expected 5 destination arguments in Scan, not 4 Can not create a session!
+ERROR 2019/02/21 17:06:54 util.go:63: sql: expected 5 destination arguments in Scan, not 4 Can not create a session!
+ERROR 2019/02/21 17:07:54 util.go:63: sql: expected 5 destination arguments in Scan, not 4 Can not create a session!
+ERROR 2019/02/21 17:09:42 util.go:63: sql: expected 5 destination arguments in Scan, not 4 Can not create a session!

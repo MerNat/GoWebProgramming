@@ -1,7 +1,6 @@
 package main
 
 import (
-	"data"
 	"fmt"
 	"net/http"
 	// "reflect"
@@ -15,17 +14,17 @@ func main() {
 	mux2 := mux.NewRouter()
 	files := http.FileServer(http.Dir("public"))
 	muxOld.Handle("/static/", http.StripPrefix("/static/", files)) // builtIn
-	mux2.Handle("/static/", http.StripPrefix("static/", files)) // for gorilla mux
+	mux2.Handle("/static/{rest}", http.StripPrefix("static/", files)) // for gorilla mux
 
 	// mux2.Handle("/{mmaa}/", log(index))
 	mux2.HandleFunc("/", index)
 	muxOld.HandleFunc("/", index)
 	// mux.HandleFunc("/err", err)
 	mux2.HandleFunc("/login", login)
-	// mux.HandleFunc("/logout", logout)
-	// mux.HandleFunc("/signup", signup)
-	// mux.HandleFunc("/signup_account", signupAccount)
-	// mux.HandleFunc("/authenticate", authenticate)
+	mux2.HandleFunc("/logout", logout)
+	mux2.HandleFunc("/signup", signup)
+	mux2.HandleFunc("/signup_account", signupAccount)
+	mux2.HandleFunc("/authenticate", authenticate)
 	// mux.HandleFunc("/thread/new", newThread)
 	// mux.HandleFunc("/thread/create", createThread)
 	// mux.HandleFunc("/thread/post", postThread)
@@ -47,20 +46,3 @@ func main() {
 // 		h(w, r)
 // 	}
 // }
-
-func index(w http.ResponseWriter, r *http.Request) {
-	// values := mux.Vars(r)
-	// fmt.Println("The value of mmaa: ", values["mmaa"], r.Method)
-	threads, err := data.Threads()
-	w.WriteHeader(404) //Status Code
-	if err == nil {
-		_, err := session(w, r)
-		if err != nil {
-			generateHTML(w, threads, "layout", "public.navbar", "index")
-		} else {
-			generateHTML(w, threads, "layout", "private.navbar", "index")
-		}
-	} else {
-		fmt.Println("Error Found: ", err.Error())
-	}
-}
