@@ -14,7 +14,7 @@ func main() {
 	mux2 := mux.NewRouter()
 	files := http.FileServer(http.Dir("public"))
 	muxOld.Handle("/static/", http.StripPrefix("/static/", files)) // builtIn
-	mux2.Handle("/static/{rest}", http.StripPrefix("static/", files)) // for gorilla mux
+	mux2.PathPrefix("/static/").Handler(http.StripPrefix("/static/", files)) // for gorilla mux
 
 	// mux2.Handle("/{mmaa}/", log(index))
 	mux2.HandleFunc("/", index)
@@ -25,8 +25,8 @@ func main() {
 	mux2.HandleFunc("/signup", signup)
 	mux2.HandleFunc("/signup_account", signupAccount)
 	mux2.HandleFunc("/authenticate", authenticate)
-	// mux.HandleFunc("/thread/new", newThread)
-	// mux.HandleFunc("/thread/create", createThread)
+	mux2.HandleFunc("/thread/new", newThread)
+	mux2.HandleFunc("/thread/create", createThread)
 	// mux.HandleFunc("/thread/post", postThread)
 	// mux.HandleFunc("/thread/read", readThread)
 

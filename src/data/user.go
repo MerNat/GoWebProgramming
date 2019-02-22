@@ -1,9 +1,7 @@
 package data
 
 import (
-	_ "math/big"
 	"time"
-	"log"
 )
 
 // User defines a user structure
@@ -29,7 +27,7 @@ func (user *User) CreateSession() (session Session, err error) {
 	statement := "insert into sessions (uuid, email, user_id, created_at) values ($1, $2, $3, $4) returning id, uuid, email, user_id, created_at"
 	stmt, err := Db.Prepare(statement)
 	if err != nil {
-		log.Println(err)
+		return
 	}
 	defer stmt.Close()
 	err = stmt.QueryRow(createUUID(), user.Email, user.Id, time.Now()).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId ,&session.CreatedAt)
@@ -47,7 +45,7 @@ func (user *User) Session() (session Session, err error) {
 // Check if session is valid in the db
 func (session *Session) Check() (valid bool, err error) {
 	statement := "SELECT id, uuid, email, user_id, created_at FROM sessions WHERE uuid = $1"
-	err = Db.QueryRow(statement, session.Uuid).Scan(&session.Id, &session.UserId, &session.Email, &session.UserId, &session.CreatedAt)
+	err = Db.QueryRow(statement, session.Uuid).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
 	if err != nil {
 		valid = false
 		return

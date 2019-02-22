@@ -13,11 +13,12 @@ import (
 var logger *log.Logger
 
 func init() {
-	file, err := os.OpenFile("chitchat.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	_, err := os.OpenFile("chitchat.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln("Failed to open log file", err)
 	}
-	logger = log.New(file, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
+	// logger = log.New(file, "INFO ", log.Ldate|log.Ltime|log.Lshortfile)
+	logger = log.New(os.Stdout,"INFO", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 //loadConfig reconfigures it self.

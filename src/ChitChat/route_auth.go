@@ -3,7 +3,6 @@ package main
 import (
 	"data"
 	"net/http"
-	"fmt"
 )
 
 //login redirects to the login form only
@@ -43,13 +42,11 @@ func authenticate(w http.ResponseWriter, r *http.Request) {
 		if err != nil{
 			danger(err, "Can not create a session!")
 		}
-		fmt.Println(session)
 		cookie := http.Cookie{
 			Name:     "_cookie",
 			Value:    session.Uuid,
 			HttpOnly: true,
 		}
-		fmt.Println(cookie)
 		http.SetCookie(w, &cookie)
 		http.Redirect(w, r, "/", 302)
 	} else {
