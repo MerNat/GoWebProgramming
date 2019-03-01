@@ -75,7 +75,7 @@ func Threads()(threads []Thread, err error){
 func (thread *Thread) User() (user User){
 	user = User{}
 	Db.QueryRow("SELECT id, uuid, name, email, created_at FROM users WHERE id=$1",thread.UserId).
-	Scan(&user.Id,&user.Uuid,&user.Name,&user.Email,&user.CreatedAt)
+	Scan(&user.Id ,&user.Uuid ,&user.Name ,&user.Email ,&user.CreatedAt)
 	return
 }
 // User method of Post returns the User who created the post
@@ -96,7 +96,7 @@ func ThreadByUUID(uuid string)(conv Thread, err error){
 
 // Posts Method returns posts associated with a thread
 func (thread *Thread) Posts()(posts []Post, err error){
-	rows, err := Db.Query("SELECT id, uuid, body, user_id, thread_id, created_at WHERE thread_id=$1",thread.Id)
+	rows, err := Db.Query("SELECT id, uuid, body, user_id, thread_id, created_at FROM posts WHERE thread_id=$1",thread.Id)
 	if err != nil{
 		return
 	}

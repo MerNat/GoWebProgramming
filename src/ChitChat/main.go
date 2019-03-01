@@ -1,47 +1,51 @@
 package main
 
 import (
-	"data"
 	"net/http"
-	"fmt"
+	// "reflect"
+	// "runtime"
+	"time"
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	mux := http.NewServeMux()
-	files := http.FileServer(http.Dir("public"))
-	mux.Handle("/static/", http.StripPrefix("/static/", files))
 
-	mux.HandleFunc("/", index)
+	p("ChitChat", version(), "started at", config.Address)
+
+	muxOld := http.NewServeMux()
+	mux2 := mux.NewRouter()
+	files := http.FileServer(http.Dir(config.Static))
+	muxOld.Handle("/static/", http.StripPrefix("/static/", files)) // builtIn
+	mux2.PathPrefix("/static/").Handler(http.StripPrefix("/static/", files)) // for gorilla mux
+
+	// mux2.Handle("/{mmaa}/", log(index))
+	mux2.HandleFunc("/", index)
+	muxOld.HandleFunc("/", index)
 	// mux.HandleFunc("/err", err)
-	// mux.HandleFunc("/login", login)
-	// mux.HandleFunc("/logout", logout)
-	// mux.HandleFunc("/signup", signup)
-	// mux.HandleFunc("/signup_account", signupAccount)
-	// mux.HandleFunc("/authenticate", authenticate)
-	// mux.HandleFunc("/thread/new", newThread)
-	// mux.HandleFunc("/thread/create", createThread)
-	// mux.HandleFunc("/thread/post", postThread)
-	// mux.HandleFunc("/thread/read", readThread)
+	mux2.HandleFunc("/login", login)
+	mux2.HandleFunc("/logout", logout)
+	mux2.HandleFunc("/signup", signup)
+	mux2.HandleFunc("/signup_account", signupAccount)
+	mux2.HandleFunc("/authenticate", authenticate)
+	mux2.HandleFunc("/thread/new", newThread)
+	mux2.HandleFunc("/thread/create", createThread)
+	mux2.HandleFunc("/thread/post", postThread)
+	mux2.HandleFunc("/thread/read/{id}", readThread)
 
 	server := &http.Server{
-		Addr:    "0.0.0.0:8080",
-		Handler: mux,
+		Addr:    config.Address,
+		Handler: mux2,
+		ReadHeaderTimeout: time.Duration(config.ReadTimeout * int64(time.Second)),
+		WriteTimeout: time.Duration(config.WriteTimeout * int64(time.Second)),
+		MaxHeaderBytes: 1 << 20,
 	}
-
-	fmt.Println("Server Started")
 	server.ListenAndServe()
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	threads, err := data.Threads()
-	if err == nil {
-		_, err := session(w, r)
-		if err != nil {
-			generateHTML(w, threads, "layout", "public.navbar", "index")
-		} else {
-			generateHTML(w, threads, "layout", "private.navbar", "index")
-		}
-	}else{
-		fmt.Println("Something is wrong", err.Error())
-	}
-}
+// func log(h http.HandlerFunc) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		name := runtime.FuncForPC(reflect.ValueOf(h).Pointer()).Name()
+// 		fmt.Println("Handler function called - " + name)
+// 		h(w, r)
+// 	}
+// }
