@@ -1,18 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	// "reflect"
 	// "runtime"
-
+	"time"
 	"github.com/gorilla/mux"
 )
 
 func main() {
+
+	p("ChitChat", version(), "started at", config.Address)
+
 	muxOld := http.NewServeMux()
 	mux2 := mux.NewRouter()
-	files := http.FileServer(http.Dir("public"))
+	files := http.FileServer(http.Dir(config.Static))
 	muxOld.Handle("/static/", http.StripPrefix("/static/", files)) // builtIn
 	mux2.PathPrefix("/static/").Handler(http.StripPrefix("/static/", files)) // for gorilla mux
 
@@ -31,11 +33,12 @@ func main() {
 	mux2.HandleFunc("/thread/read/{id}", readThread)
 
 	server := &http.Server{
-		Addr:    "0.0.0.0:8080",
+		Addr:    config.Address,
 		Handler: mux2,
+		ReadHeaderTimeout: time.Duration(config.ReadTimeout * int64(time.Second)),
+		WriteTimeout: time.Duration(config.WriteTimeout * int64(time.Second)),
+		MaxHeaderBytes: 1 << 20,
 	}
-
-	fmt.Println("Server Started")
 	server.ListenAndServe()
 }
 

@@ -7,12 +7,23 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"encoding/json"
 	"os"
 )
 
+// Configuration has variable to adjust the app
+type Configuration struct{
+	Address	string
+	ReadTimeout int64
+	WriteTimeout	int64
+	Static	string
+}
+
 var logger *log.Logger
+var config Configuration
 
 func init() {
+	loadConfig()
 	_, err := os.OpenFile("chitchat.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln("Failed to open log file", err)
@@ -23,7 +34,20 @@ func init() {
 
 //loadConfig reconfigures it self.
 func loadConfig() {
+	file, err := os.Open("config.json")
+	if err!=nil{
+		log.Fatalln("Cannot open config file", err)
+	}
+	decoder := json.NewDecoder(file)
+	config = Configuration{}
+	err = decoder.Decode(&config)
+	if err!=nil{
+		log.Fatalln("Cannnot get configuration from file", err)
+	}
+}
 
+func p(a ...interface{}){
+	fmt.Println(a)
 }
 
 func session(w http.ResponseWriter, r *http.Request) (sess data.Session, err error) {
@@ -67,4 +91,8 @@ func danger(args ...interface{}) {
 func warning(args ...interface{}){
 	logger.SetPrefix("WARNING ")
 	logger.Println(args...)
+}
+
+func version() string{
+	return "0.1"
 }
