@@ -2,4 +2,4 @@
 
 Run this to alter GOPATH
 
-`export GOPATH=$HOME/Desktop/MProjects/GoWeb`
+`export GOPATH=$HOME/Desktop/MProjects/GoWebProgramming`
