@@ -55,5 +55,31 @@ func readThread(w http.ResponseWriter, request *http.Request){
 }
 
 func postThread(w http.ResponseWriter, request *http.Request){
-	
+	session, err := session(w, request)
+	if err!=nil{
+		http.Redirect(w, request, "/", 302)
+	}
+
+	err = request.ParseForm()
+
+	if err!=nil{
+		// error found
+		danger(err, "Error found when parsing form")
+	}
+
+	body := request.PostFormValue("body")
+
+	uuidThread := request.PostFormValue("uuid")
+
+	thread, err := data.ThreadByUUID(uuidThread)
+
+	if err!=nil {
+		danger (err, "Error When getting a thread")
+	}
+
+	user, _ := session.User()
+
+	user.CreatePost(thread, body)
+
+	http.Redirect(w, request, "/thread/read/"+thread.Uuid, 302)
 }
