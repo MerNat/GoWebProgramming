@@ -24,9 +24,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		_, err := session(w, r)
 		if err == nil {
-			generateHTML(w, threads, "layout", "private.navbar", "index")
+			generateHTML(w, &threads, "layout", "private.navbar", "index")
 		} else {
-			generateHTML(w, threads, "layout", "public.navbar", "index")
+			generateHTML(w, &threads, "layout", "public.navbar", "index")
 		}
 	} else {
 		fmt.Println("Error Found: ", err.Error())
