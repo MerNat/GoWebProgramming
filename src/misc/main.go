@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"fmt"
 	"encoding/json"
-	"strconv"
-	"path"
 )
 
 type Post struct {
