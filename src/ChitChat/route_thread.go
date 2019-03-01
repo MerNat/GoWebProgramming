@@ -1,8 +1,9 @@
 package main
 
 import (
-	_ "data"
+	"data"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
 func newThread(w http.ResponseWriter, request *http.Request) {
@@ -31,4 +32,28 @@ func createThread(w http.ResponseWriter, request *http.Request) {
 	_, err = user.CreateThread(request.PostFormValue("topic"))
 
 	http.Redirect(w, request, "/", 302)
+}
+
+func readThread(w http.ResponseWriter, request *http.Request){
+	requestVals := mux.Vars(request)
+	id := requestVals["id"]
+
+	thread, _ := data.ThreadByUUID(id)
+
+	_, err := session(w, request)
+
+	if err!= nil{
+		// public one
+
+		// whenever possible we should use a generated pointers to represent a Struct 
+		generateHTML(w, &thread, "layout", "public.navbar", "public.thread")
+	}else{
+		// private one
+		generateHTML(w, &thread, "layout", "private.navbar", "private.thread")
+	}
+
+}
+
+func postThread(w http.ResponseWriter, request *http.Request){
+	
 }

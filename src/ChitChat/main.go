@@ -27,8 +27,8 @@ func main() {
 	mux2.HandleFunc("/authenticate", authenticate)
 	mux2.HandleFunc("/thread/new", newThread)
 	mux2.HandleFunc("/thread/create", createThread)
-	// mux.HandleFunc("/thread/post", postThread)
-	// mux.HandleFunc("/thread/read", readThread)
+	mux2.HandleFunc("/thread/post", postThread)
+	mux2.HandleFunc("/thread/read/{id}", readThread)
 
 	server := &http.Server{
 		Addr:    "0.0.0.0:8080",
