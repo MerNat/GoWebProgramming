@@ -21,19 +21,18 @@ type Comment struct {
 	Id int `json:"id"`
 	Content string `json:"content"`
 	Author string `json:"author"`
-	}
-	
+}
 
-func main(){
-	fileJson, err := os.Open("post.json")
+func decode(fileName string) (errMsg string, err error){
+	fileJson, err := os.Open(fileName)
 	if err!=nil{
-		fmt.Println("Error openening file:", err)
+		errMsg = "Error opening file"
 		return
 	}
 	defer fileJson.Close()
 	jsonData, err := ioutil.ReadAll(fileJson)
 	if err!=nil{
-		fmt.Println("Error getting the data", err)
+		errMsg = "Error getting the data"
 		return
 	}
 
@@ -43,4 +42,14 @@ func main(){
 	fmt.Println(post)
 	data, err := json.Marshal(post)
 	fmt.Println(string(data))
+
+	return
+}
+
+func main(){
+	errMsg, err := decode("post.json")
+
+	if err!=nil{
+		fmt.Printf("%s: %s\n", errMsg, err.Error())
+	}
 }
