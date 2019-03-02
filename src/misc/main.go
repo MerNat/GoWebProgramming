@@ -23,7 +23,7 @@ type Comment struct {
 	Author string `json:"author"`
 }
 
-func decode(fileName string) (errMsg string, err error){
+func decode(fileName string) (post Post, errMsg string, err error){
 	fileJson, err := os.Open(fileName)
 	if err!=nil{
 		errMsg = "Error opening file"
@@ -36,7 +36,7 @@ func decode(fileName string) (errMsg string, err error){
 		return
 	}
 
-	var post Post
+	// var post Post
 
 	json.Unmarshal(jsonData, &post)
 	fmt.Println(post)
@@ -47,7 +47,7 @@ func decode(fileName string) (errMsg string, err error){
 }
 
 func main(){
-	errMsg, err := decode("post.json")
+	_, errMsg, err := decode("post.json")
 
 	if err!=nil{
 		fmt.Printf("%s: %s\n", errMsg, err.Error())
