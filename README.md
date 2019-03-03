@@ -20,3 +20,7 @@ To Run without building:
 To create a docker image:
 
 `docker build user/chitchat .`
+
+To Run from docker:
+
+`docker run --rm --name chitchat -p 8080:8080 user/chtichat`
