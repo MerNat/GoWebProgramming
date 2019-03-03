@@ -9,7 +9,7 @@ func TestDecode(t *testing.T){
 	if err!=nil{
 		t.Error("Error wasn't expected!", errMsg, err.Error())
 	}
-	post.Content = "Other"
+	// post.Content = "Other"
 	if post.Content != "Hello World!"{
 		t.Error("post.Content must be >> Hello World!")
 	}
