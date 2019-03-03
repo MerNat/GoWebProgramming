@@ -10,8 +10,8 @@ var wg sync.WaitGroup
 func main(){
 	counter := make(chan int)
 	wg.Add(2)
-	go printCounter("Printer Number One", counter)
 	go printCounter("Printer Number Two", counter)
+	go printCounter("Printer Number One", counter)
 	counter <- 1
 	fmt.Println("Waiting for jobs to finish")
 	wg.Wait()
