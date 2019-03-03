@@ -19,4 +19,4 @@ To Run without building:
 
 To create a docker image:
 
-`docker build xxx/chitchat .`
+`docker build user/chitchat .`
