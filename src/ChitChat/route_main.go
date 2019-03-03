@@ -20,7 +20,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	// values := mux.Vars(r)
 	// fmt.Println("The value of mmaa: ", values["mmaa"], r.Method)
 	threads, err := data.Threads()
-	w.WriteHeader(404) //Status Code
+	w.WriteHeader(200) //Status Code
 	if err == nil {
 		_, err := session(w, r)
 		if err == nil {

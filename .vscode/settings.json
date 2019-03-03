@@ -1,4 +1,5 @@
 {
     "go.gopath": "/home/meron/Desktop/MProjects/GoWebProgramming",
-    "go.inferGopath": true
+    "go.inferGopath": true,
+    "git.ignoreLimitWarning": true
 }
